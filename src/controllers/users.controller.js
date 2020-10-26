@@ -226,14 +226,18 @@ class Users {
     const bearerToken = req.headers['authorization'].split(' ')[1]
     const decoded = verify(bearerToken, process.env.SECRET)
     try {
-
       const data = await getUserById(decoded.id)
+      const isPin = data[0].pin ? true : false
       delete data[0].pin
       delete data[0].password
+      const user = {
+        ...data[0],
+        pin: isPin
+      }
       return res.status(status.OK).json({
         success: true,
         message: "Success get user",
-        data: data[0]
+        data: user
       })
     } catch (e) {
       return res.status(status.INTERNALSERVERERROR).json({
