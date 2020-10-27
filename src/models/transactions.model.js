@@ -15,7 +15,7 @@ class Transactions {
         const limitNew = !isNaN(parseInt(limit)) ? parseInt(limit) : 5
         const offsetNew = !isNaN(parseInt(offset)) ? parseInt(offset) : 5
 
-        return query("SELECT a.id, a.note, a.total, b.name AS from_name, c.name AS to_name, b.email AS from_email, c.email AS to_email, a.created_at FROM transactions AS a INNER JOIN users AS b ON a.id_from_user = b.id INNER JOIN users AS c ON a.id_to_user = c.id WHERE a.id_from_user = ? OR a.id_to_user = ? ORDER BY a.created_at DESC LIMIT ? OFFSET ?", [id, id, limitNew, (offsetNew - 1) * limitNew])
+        return query("SELECT a.id, a.note, a.total, b.name AS from_name, b.photo AS from_photo, c.name AS to_name, c.photo AS to_photo, b.email AS from_email, c.email AS to_email, a.created_at FROM transactions AS a INNER JOIN users AS b ON a.id_from_user = b.id INNER JOIN users AS c ON a.id_to_user = c.id WHERE a.id_from_user = ? OR a.id_to_user = ? ORDER BY a.created_at DESC LIMIT ? OFFSET ?", [id, id, limitNew, (offsetNew - 1) * limitNew])
     }
 
     getTransactionsByUserid(id) {
