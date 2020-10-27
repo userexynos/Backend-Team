@@ -1,5 +1,5 @@
-const status = require('../helpers/statusCode.helper')
-const { getTopup, getAllTopup, deleteTopup, updateTopup, insertTopup } = require('../models/topup.model')
+const status = require('../helpers/status')
+const { getTopup, getAllTopup, deleteTopup, updateTopup, insertTopup } = require('../models/topup')
 
 class Topup {
   async getAllTopup(req, res) {

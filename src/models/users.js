@@ -1,5 +1,5 @@
-const db = require('../configs/database.config')
-const query = require('../helpers/query.helper')
+const db = require('../configs/database')
+const query = require('../helpers/query')
 
 
 class UserModel {
@@ -11,7 +11,7 @@ class UserModel {
         const limitNew = !isNaN(parseInt(limit)) ? parseInt(limit) : 5
         const offsetNew = !isNaN(parseInt(offset)) ? parseInt(offset) : 5
 
-        return query("SELECT id, name, phone, photo, balance FROM users WHERE id != ? AND name LIKE ? ORDER BY name asc LIMIT ? OFFSET ?", [id, name + "%", limitNew, (offsetNew - 1) * limitNew])
+        return query(`SELECT id, name, phone, photo, balance FROM users WHERE id != ? AND name LIKE ? ORDER BY name asc LIMIT ? OFFSET ?`, [id, name + "%", limitNew, (offsetNew - 1) * limitNew])
     }
 
     getUserByEmail(email) {

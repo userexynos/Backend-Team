@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const { findUsersData, transferBalance, getHistoryByUserId, getAllHistory, updateTransactionData, deleteTransactionData } = require('../controllers/transfer.controller')
+const { findUsersData, transferBalance, getHistoryByUserId, getAllHistory, updateTransactionData, deleteTransactionData } = require('../controllers/transfer')
 
 router
   .get('/', findUsersData)

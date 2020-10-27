@@ -1,5 +1,5 @@
 const { verify } = require("jsonwebtoken");
-const status = require("../helpers/statusCode.helper");
+const status = require("../helpers/status");
 
 class Auth {
   verify(req, res, next) {
@@ -47,14 +47,11 @@ class Auth {
       });
 
     const decode = verify(bearerToken, process.env.SECRET)
-    
-    // console.log(decode)
 
     if (decode.role === "admin") {
       return next();
-      
+
     } else {
-      // console.log(err)
       return res.status(status.BADREQUEST).json({
         success: false,
         message: "Bad Request",

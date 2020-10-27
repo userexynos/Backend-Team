@@ -1,5 +1,5 @@
-const db = require('../configs/database.config')
-const query = require('../helpers/query.helper')
+const db = require('../configs/database')
+const query = require('../helpers/query')
 
 class Transactions {
     getTransactions() {

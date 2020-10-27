@@ -1,4 +1,4 @@
-const status = require('../helpers/statusCode.helper')
+const status = require('../helpers/status')
 
 exports.statusNotFound = (req, res) => {
     res.json({

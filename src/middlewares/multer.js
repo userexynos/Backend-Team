@@ -1,5 +1,5 @@
 
-const upload = require("../helpers/multer.helper")
+const upload = require("../helpers/multer")
 
 
 const multerHandling = (req, res, next) => {

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { body } = require('express-validator');
-const { loginUser, registerUser } = require('../controllers/auth.controller')
+const { loginUser, registerUser } = require('../controllers/auth')
 
 const loginValidation = [
   body('email').isEmail().withMessage("Email format is incorrect!"),

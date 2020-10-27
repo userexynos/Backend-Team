@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const { getAllTopup, getTopup, updateTopup, deleteTopup, insertTopup } = require('../controllers/topup.controller')
+const { getAllTopup, getTopup, updateTopup, deleteTopup, insertTopup } = require('../controllers/topup')
 
 router
   .get('/', getAllTopup)

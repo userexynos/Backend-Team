@@ -1,4 +1,4 @@
-const query = require('../helpers/query.helper')
+const query = require('../helpers/query')
 
 class TopUp {
     getAllTopup() {

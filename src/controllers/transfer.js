@@ -1,6 +1,6 @@
-const status = require('../helpers/statusCode.helper')
-const { findUsers, getUserById, updateUserBalance } = require('../models/users.model')
-const { insertTransactions, getTransaction, getTransactionsByUserid, getTransactions, deleteTransaction, updateTransactionData } = require('../models/transactions.model')
+const status = require('../helpers/status')
+const { findUsers, getUserById, updateUserBalance } = require('../models/users')
+const { insertTransactions, getTransaction, getTransactionsByUserid, getTransactions, deleteTransaction, updateTransactionData } = require('../models/transactions')
 
 class Transfer {
   async findUsersData(req, res) {

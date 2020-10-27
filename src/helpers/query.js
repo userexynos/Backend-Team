@@ -1,4 +1,4 @@
-const db = require('../configs/database.config')
+const db = require('../configs/database')
 
 const QUERY = (query, payload = null) => {
   return new Promise((resolve, reject) => {
