@@ -8,7 +8,7 @@ require("./src/configs/database.config")
 
 // Middlewares
 const { statusNotFound } = require('./src/middlewares/serverHandler.middleware')
-const { verify } = require('./src/middlewares/auth.middleware')
+const { verify, verifyAdmin } = require('./src/middlewares/auth.middleware')
 
 // Routers
 const indexRouter = require('./src/routes/index.route')
@@ -28,7 +28,7 @@ app.use("*", cors())
 app.use(`${process.env.PREFIX}/`, indexRouter)
 app.use(`${process.env.PREFIX}/auth`, authRouter)
 app.use(`${process.env.PREFIX}/users`, verify, usersRouter)
-app.use(`${process.env.PREFIX}/topup`, topupRouter)
+app.use(`${process.env.PREFIX}/topup`,verifyAdmin, topupRouter)
 app.use(`${process.env.PREFIX}/transfer`, transferRouter)
 
 // Handle Error Notfound 

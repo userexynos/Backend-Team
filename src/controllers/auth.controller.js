@@ -37,7 +37,7 @@ class Auth {
         message: "Login Succesfully",
         data: {
           role: checkEmail.role,
-          token: sign({ id: checkEmail.id }, process.env.SECRET),
+          token: sign({ id: checkEmail.id, role:checkEmail.role }, process.env.SECRET),
         }
       })
     } catch (e) {
