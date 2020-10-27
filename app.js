@@ -14,8 +14,8 @@ const { verify, verifyAdmin } = require('./src/middlewares/auth')
 const indexRouter = require('./src/routes/index')
 const authRouter = require('./src/routes/auth')
 const usersRouter = require('./src/routes/users')
-const topupRouter = require('./src/routes/topup')
-const transferRouter = require('./src/routes/transfer')
+// const topupRouter = require('./src/routes/topup')
+// const transferRouter = require('./src/routes/transfer')
 
 const app = express()
 const prefix = process.env.PREFIX || "/api/v1";
@@ -29,7 +29,7 @@ app.use("*", cors())
 app.use(`${prefix}/`, indexRouter)
 app.use(`${prefix}/auth`, authRouter)
 app.use(`${prefix}/users`, verify, usersRouter)
-app.use(`${prefix}/topup`, verifyAdmin, topupRouter)
+// app.use(`${prefix}/topup`, verifyAdmin, topupRouter)
 // app.use(`${prefix}/transfer`, transferRouter)
 
 // Handle Error Notfound 

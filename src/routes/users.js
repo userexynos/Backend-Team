@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { body } = require("express-validator");
+const { getAllTopup } = require('../controllers/topup')
 const {
   uploadImage,
   transferBalance,
@@ -45,6 +46,7 @@ router
   .get("/histories", getAllHistoryByUserId)
   .get("/detail", getUserByToken)
   .get("/search", findUsersData)
+  .get("/guide-topup", getAllTopup)
   .get('/:id', getUserById)
   .post("/photo", uploadImage)
   .post("/transfer", validateTransfer, transferBalance)
