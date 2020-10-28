@@ -61,14 +61,4 @@ router
   .patch("/create_pin", validatePin, createPin)
   .patch("/password", validatePassword, changePassword)
   .delete("/phone", deletePhoneNumber)
-
-  //admin
-  .get("/", verifyAdmin, getAllUsers)
-  .post("/paginate", verifyAdmin, getUsersPaginate)
-  .post("/", verifyAdmin, insertUser)
-  .patch("/:id", verifyAdmin, updateUser)
-  .patch("/update-user-balance/:id", verifyAdmin, updateUserBalance)
-  .delete("/:id", verifyAdmin, deleteUser);
-
-// .get("/history", getHistoryByUserId)
 module.exports = router;
