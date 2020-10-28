@@ -10,6 +10,7 @@ const {
   getHistoryByUserId,
   findUsersData,
   uploadImage,
+  getAllHistory_Admin,
 } = require("../controllers/admin");
 
 const {
@@ -20,24 +21,24 @@ const {
   insertTopup,
 } = require("../controllers/topup");
 
-//tab users
-router
-  .get("/users", getAllUsers)
-  .post("/users/paginate", getUsersPaginate)
-  .post("/users", insertUser)
-  .patch("/users/:id", updateUser)
-  .patch("/users/update-user-balance/:id", updateUserBalance)
-  .delete("/users/:id", deleteUser)
-  .get("/users/history/:id", getHistoryByUserId)
-  .get("/users/search", findUsersData)
-  .post("/users/photo", uploadImage)
-
-//tab topup
+//CRUD TOPUP
 router
   .get('/topup', getAllTopup)
   .get('/topup/:id', getTopup)
   .post('/topup', insertTopup)
   .patch('/topup/:id', updateTopup)
   .delete('/topup/:id', deleteTopup)
+//CRUD USER
+  .get("/users", getAllUsers)
+  .get("/user/history/:id", getHistoryByUserId)
+  .get("/user/search", findUsersData)
+  .post("/users/paginate", getUsersPaginate)
+  .post("/user", insertUser)
+  .post("/user/photo", uploadImage)
+  .patch("/user/:id", updateUser)
+  .patch("/user/update-user-balance/:id", updateUserBalance)
+  .delete("/user/:id", deleteUser)
+//GET ALL TRANSACTION BY ADMIN
+  .get('/history', getAllHistory_Admin)
 
 module.exports = router;

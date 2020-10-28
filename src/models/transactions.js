@@ -38,6 +38,12 @@ class Transactions {
     deleteTransaction(id) {
         return query("DELETE FROM transactions WHERE id = ?", [id])
     }
+
+    //Admin
+
+    getTransactions_Admin() {
+        return query("SELECT a.id, a.note, a.total, b.name AS from_name, b.photo AS from_photo, c.name AS to_name, c.photo AS to_photo, b.email AS from_email, c.email AS to_email, a.created_at FROM transactions AS a INNER JOIN users AS b ON a.id_from_user = b.id INNER JOIN users AS c ON a.id_to_user = c.id")
+    }
 }
 
 module.exports = new Transactions()

@@ -1,6 +1,6 @@
 const status = require('../helpers/status')
 const { findUsers, getUserById, updateUserBalance } = require('../models/users')
-const { insertTransactions, getTransaction, getTransactionsByUserid, getTransactions, deleteTransaction, updateTransactionData } = require('../models/transactions')
+const { insertTransactions, getTransaction, getTransactionsByUserid, getTransactions, deleteTransaction, updateTransactionData, getTransactions_Admin } = require('../models/transactions')
 
 class Transfer {
   async findUsersData(req, res) {
@@ -217,6 +217,7 @@ class Transfer {
       })
     }
   }
+
 }
 
 module.exports = new Transfer()

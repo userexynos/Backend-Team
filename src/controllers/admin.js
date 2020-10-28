@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const status = require('../helpers/status')
 const { verify } = require("jsonwebtoken");
 const {
   getUsers,
@@ -12,6 +13,7 @@ const {
 } = require("../models/users");
 const {
   getTransactionsByUserid,
+  getTransactions_Admin
   // getAllTransactionsByUserid,
 } = require("../models/transactions");
 const upload = require("../helpers/multer");
@@ -189,6 +191,33 @@ class Admin {
       }
     });
   }
+
+  async getAllHistory_Admin(req, res) {
+    try {
+      const data = await getTransactions_Admin()
+      if (!data.length)
+        return res.status(status.OK).json({
+          status: true,
+          message: "Don't have any transaction",
+          data: []
+        })
+
+      res.status(status.OK).json({
+        status: true,
+        message: "Success get All data Transaction",
+        data
+      })
+    } catch (error) {
+      console.log(error)
+
+      res.status(status.INTERNALSERVERERROR).json({
+        status: false,
+        message: "Failed get history transaction data",
+        data: []
+      })
+    }
+  }
+
 }
 
 module.exports = new Admin();
