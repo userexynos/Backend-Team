@@ -15,10 +15,10 @@ const {
 } = require("../controllers/admin");
 
 router
-  .get("/", getAllUsers)
+  .get("/users", getAllUsers)
   .post("/paginate", getUsersPaginate)
-  .post("/", insertUser)
-  .patch("/:id", updateUser)
+  .post("/user", insertUser)
+  .patch("/user/:id", updateUser)
   .patch("/update-user-balance/:id", updateUserBalance)
   .delete("/:id", deleteUser)
   .get("/history/:id", getHistoryByUserId)
