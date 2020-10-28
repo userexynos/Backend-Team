@@ -10,3 +10,8 @@ router
   .patch('/:id', updateTopup)
   .delete('/:id', deleteTopup)
 module.exports = router
+
+
+// INI KAYANYA GA KEPAKE KAN,
+// GET TOPUP NYA USER NGAMBIL DI ROUTE USERS, CRUD NYA ADMIN AMBIL DI ROUTE ADMIN.
+// JD INI KAYA NYA GA GUNA LAGI:3

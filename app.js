@@ -31,7 +31,7 @@ app.use("*", cors());
 app.use(`${prefix}/`, indexRouter);
 app.use(`${prefix}/auth`, authRouter);
 app.use(`${prefix}/users`, verify, usersRouter);
-app.use(`${prefix}/admin/users`, verifyAdmin, adminRouter);
+app.use(`${prefix}/admin`, verifyAdmin, adminRouter);
 
 
 // app.use(`${prefix}/topup`, verifyAdmin, topupRouter)

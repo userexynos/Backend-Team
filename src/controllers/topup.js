@@ -2,6 +2,7 @@ const status = require('../helpers/status')
 const { getTopup, getAllTopup, deleteTopup, updateTopup, insertTopup } = require('../models/topup')
 
 class Topup {
+  // users only can do getAllTopup here
   async getAllTopup(req, res) {
     try {
       const data = await getAllTopup()
@@ -20,6 +21,7 @@ class Topup {
     }
   }
 
+  //But Admin can do whatever (CRUD) include getAllTopup above
   async getTopup(req, res) {
     const { id } = req.params
     try {

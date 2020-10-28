@@ -10,18 +10,34 @@ const {
   getHistoryByUserId,
   findUsersData,
   uploadImage,
-
 } = require("../controllers/admin");
 
+const {
+  getAllTopup,
+  getTopup,
+  updateTopup,
+  deleteTopup,
+  insertTopup,
+} = require("../controllers/topup");
+
+//tab users
 router
-  .get("/", getAllUsers)
-  .post("/paginate", getUsersPaginate)
-  .post("/", insertUser)
-  .patch("/:id", updateUser)
-  .patch("/update-user-balance/:id", updateUserBalance)
-  .delete("/:id", deleteUser)
-  .get("/history/:id", getHistoryByUserId)
-  .get("/search", findUsersData)
-  .post("/photo", uploadImage)
+  .get("/users", getAllUsers)
+  .post("/users/paginate", getUsersPaginate)
+  .post("/users", insertUser)
+  .patch("/users/:id", updateUser)
+  .patch("/users/update-user-balance/:id", updateUserBalance)
+  .delete("/users/:id", deleteUser)
+  .get("/users/history/:id", getHistoryByUserId)
+  .get("/users/search", findUsersData)
+  .post("/users/photo", uploadImage)
+
+//tab topup
+router
+  .get('/topup', getAllTopup)
+  .get('/topup/:id', getTopup)
+  .post('/topup', insertTopup)
+  .patch('/topup/:id', updateTopup)
+  .delete('/topup/:id', deleteTopup)
 
 module.exports = router;
