@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { body } = require("express-validator");
-const { getAllTopup } = require('../controllers/topup')
+const { getAllTopup } = require("../controllers/topup");
+const { verifyAdmin } = require("../middlewares/auth");
 const {
   uploadImage,
   transferBalance,
@@ -13,7 +14,13 @@ const {
   deletePhoneNumber,
   changePassword,
   getAllHistoryByUserId,
-  getUserById
+  getUserById,
+  getAllUsers,
+  getUsersPaginate,
+  insertUser,
+  updateUser,
+  deleteUser,
+  updateUserBalance,
 } = require("../controllers/users");
 
 const validatePin = [
@@ -26,7 +33,7 @@ const validateTransfer = [
   body("id").not().isEmpty().withMessage("ID Cannot be empty"),
   body("total").not().isEmpty().withMessage("Total Cannot be empty"),
   body("note").not().isEmpty().withMessage("Note Cannot be empty"),
-  ...validatePin
+  ...validatePin,
 ];
 
 const validateAddPhone = [
@@ -47,17 +54,11 @@ router
   .get("/detail", getUserByToken)
   .get("/search", findUsersData)
   .get("/guide-topup", getAllTopup)
-  .get('/:id', getUserById)
+  .get("/:id", getUserById)
   .post("/photo", uploadImage)
   .post("/transfer", validateTransfer, transferBalance)
   .patch("/phone", validateAddPhone, addPhoneNumber)
   .patch("/create_pin", validatePin, createPin)
   .patch("/password", validatePassword, changePassword)
-  .delete("/phone", deletePhoneNumber);
-// .get("/history", getHistoryByUserId)
-// .get('/', getAllUsers)
-// .get('/paginate', getUsersPaginate)
-// .post('/', insertUser)
-// .patch('/:id', updateUser)
-// .delete('/:id', deleteUser)
+  .delete("/phone", deletePhoneNumber)
 module.exports = router;
