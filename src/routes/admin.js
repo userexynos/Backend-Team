@@ -15,16 +15,18 @@ const {
 } = require("../controllers/admin");
 
 router
+//CRUD USER
   .get("/users", getAllUsers)
-  .post("/paginate", getUsersPaginate)
+  .get("/user/history/:id", getHistoryByUserId)
+  .get("/user/search", findUsersData)
+  .post("/users/paginate", getUsersPaginate)
   .post("/user", insertUser)
+  .post("/user/photo", uploadImage)
   .patch("/user/:id", updateUser)
-  .patch("/update-user-balance/:id", updateUserBalance)
-  .delete("/:id", deleteUser)
-  .get("/history/:id", getHistoryByUserId)
-  .get("/search", findUsersData)
-  .post("/photo", uploadImage)
-  
+  .patch("/user/update-user-balance/:id", updateUserBalance)
+  .delete("/user/:id", deleteUser)
+   
+//GET ALL TRANSACTION BY ADMIN
   .get('/history', getAllHistory_Admin)
 
 module.exports = router;
