@@ -10,6 +10,7 @@ const {
   getHistoryByUserId,
   findUsersData,
   uploadImage,
+  getAllHistory_Admin
 
 } = require("../controllers/admin");
 
@@ -23,5 +24,7 @@ router
   .get("/history/:id", getHistoryByUserId)
   .get("/search", findUsersData)
   .post("/photo", uploadImage)
+  
+  .get('/history', getAllHistory_Admin)
 
 module.exports = router;

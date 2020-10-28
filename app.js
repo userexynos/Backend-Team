@@ -12,17 +12,10 @@ const { statusNotFound } = require("./src/middlewares/serverHandler");
 const { verify, verifyAdmin } = require("./src/middlewares/auth");
 
 // Routers
-<<<<<<< HEAD
-const indexRouter = require('./src/routes/index')
-const authRouter = require('./src/routes/auth')
-const usersRouter = require('./src/routes/users')
-const adminTransactionRouter = require('./src/routes/adminTransaction')
-=======
 const indexRouter = require("./src/routes/index");
 const authRouter = require("./src/routes/auth");
 const usersRouter = require("./src/routes/users");
 const adminRouter = require("./src/routes/admin");
->>>>>>> 0db93d4226402d39347c118868fe230bd36a3efd
 // const topupRouter = require('./src/routes/topup')
 // const transferRouter = require('./src/routes/transfer')
 
@@ -38,17 +31,9 @@ app.use("*", cors());
 app.use(`${prefix}/`, indexRouter);
 app.use(`${prefix}/auth`, authRouter);
 app.use(`${prefix}/users`, verify, usersRouter);
-app.use(`${prefix}/admin/users`, verifyAdmin, adminRouter);
+app.use(`${prefix}/admin`, verifyAdmin, adminRouter);
 
 
-<<<<<<< HEAD
-app.use("*", cors())
-app.use(`${prefix}/`, indexRouter)
-app.use(`${prefix}/auth`, authRouter)
-app.use(`${prefix}/users`, verify, usersRouter)
-app.use(`${prefix}/admin`, verifyAdmin, adminTransactionRouter)
-=======
->>>>>>> 0db93d4226402d39347c118868fe230bd36a3efd
 // app.use(`${prefix}/topup`, verifyAdmin, topupRouter)
 // app.use(`${prefix}/transfer`, transferRouter)
 
