@@ -8,9 +8,9 @@ const {
   updateUserBalance,
   deleteUser,
   getHistoryByUserId,
-  findUsersData,
   uploadImage,
   getAllHistory_Admin,
+  findUsersData,
 } = require("../controllers/admin");
 
 const {
@@ -23,12 +23,12 @@ const {
 
 //CRUD TOPUP
 router
-  .get('/topup', getAllTopup)
-  .get('/topup/:id', getTopup)
-  .post('/topup', insertTopup)
-  .patch('/topup/:id', updateTopup)
-  .delete('/topup/:id', deleteTopup)
-//CRUD USER
+  .get("/topup", getAllTopup)
+  .get("/topup/:id", getTopup)
+  .post("/topup", insertTopup)
+  .patch("/topup/:id", updateTopup)
+  .delete("/topup/:id", deleteTopup)
+  //CRUD USER
   .get("/users", getAllUsers)
   .get("/user/history/:id", getHistoryByUserId)
   .get("/user/search", findUsersData)
@@ -38,7 +38,7 @@ router
   .patch("/user/:id", updateUser)
   .patch("/user/update-user-balance/:id", updateUserBalance)
   .delete("/user/:id", deleteUser)
-//GET ALL TRANSACTION BY ADMIN
-  .get('/history', getAllHistory_Admin)
+  //GET ALL TRANSACTION BY ADMIN
+  .get("/history", getAllHistory_Admin);
 
 module.exports = router;
