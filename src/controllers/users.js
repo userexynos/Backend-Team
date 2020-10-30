@@ -314,7 +314,7 @@ class Users {
         va_number: va_numbers[0].va_number,
         va_type: va_numbers[0].bank,
         status: transaction_status !== "settlement" ? 0 : 1,
-        amount: gross_amount,
+        amount: parseInt(gross_amount),
         paydate_at: settlement_time !== "undefined" ? settlement_time : null
       }
 
@@ -328,7 +328,7 @@ class Users {
       console.log(findTransaction[0].id_user)
       console.log(userData)
       await updateTopup(dataTopup, { order_id: findTransaction[0].order_id })
-      await updateUserBalance({ id: findTransaction[0].id_user, balance: userData[0].balance + gross_amount })
+      await updateUserBalance({ id: findTransaction[0].id_user, balance: userData[0].balance + parseInt(gross_amount) })
       return resSuccess(res, CREATED, "Payment Succesfully");
     } catch (error) {
       console.log(error)
