@@ -1,23 +1,26 @@
 const { validationResult } = require("express-validator");
+const midtrans = require('midtrans-client')
 const { verify } = require("jsonwebtoken");
+const upload = require("../helpers/multer");
+const randString = require("../helpers/randomString")
+const { compareSync, hashSync, genSaltSync } = require("bcryptjs");
 const {
-  getUsers,
   getUserById,
-  getUsersPaginate,
-  insertUser,
   updateUserBalance,
   updateUser,
-  deleteUser,
   findUsers,
 } = require("../models/users");
-const upload = require("../helpers/multer");
 const {
   getAllTransactionsByUserid,
-  getTransactionsByUserid,
   getTransactionsByid,
   insertTransactions,
+  getIncomeTransaction,
+  getExpenseTransaction,
+  insertTransfer,
+  insertTopup,
+  getTransactionsByOrderid,
+  updateTopup
 } = require("../models/transactions");
-const { compareSync, hashSync, genSaltSync } = require("bcryptjs");
 const {
   resSuccess,
   resFailure,
@@ -100,13 +103,19 @@ class Users {
     const decoded = verify(bearerToken, process.env.SECRET);
 
     try {
-      const data = await getAllTransactionsByUserid(decoded.id, limit, offset);
-      if (!data.length)
-        return resSuccess(res, OK, "You don't have any transaction", []);
+      let history = await getAllTransactionsByUserid(decoded.id, limit, offset);
+      history = history.map(item => ({ ...item, is_income: decoded.id === item.id_receiver || item.type === "topup" }))
+      const incomer = await getIncomeTransaction(decoded.id)
+      const expenser = await getExpenseTransaction(decoded.id)
+      const income = (incomer[0].transfer ? incomer[0].transfer : 0) + incomer[0].topup
+      const expense = expenser[0].transfer ? expenser[0].transfer : 0
+      if (!history.length)
+        return resSuccess(res, OK, "You don't have any transaction", { expense: 0, income: 0, history: [] });
 
-      return resSuccess(res, OK, "Success get Transactions History", data);
+      return resSuccess(res, OK, "Success get Transactions History", { expense, income, history });
     } catch (error) {
-      return resFailure(res, INTERNALSERVERERROR, "Internal Server Error", []);
+      console.log(error)
+      return resFailure(res, INTERNALSERVERERROR, "Internal Server Error", {});
     }
   }
 
@@ -134,34 +143,31 @@ class Users {
       if (currentBalanceFrom < total)
         return resFailure(res, BADREQUEST, "Balance isn't enough");
 
-      await updateUserBalance({
-        id: decoded.id,
-        balance: currentBalanceFrom - total,
-      });
+      await updateUserBalance({ id: decoded.id, balance: currentBalanceFrom - total });
       await updateUserBalance({ id: id, balance: currentBalanceTo + total });
 
-      const data = await insertTransactions({
-        id_from_user: decoded.id,
-        id_to_user: id,
-        note,
-        total,
-      });
+      const transfer = await insertTransfer({ id_receiver: id, note, amount: total, balance: currentBalanceFrom })
+      const transactions = await insertTransactions({ id_user: decoded.id, id_transfer: transfer.insertId, type: "transfer", created_at: new Date() });
 
-      return resSuccess(res, OK, "Success Transfer", { id: data.insertId });
+      return resSuccess(res, OK, "Success Transfer", { id: transactions.insertId });
     } catch (error) {
+      console.log(error)
       return resFailure(res, INTERNALSERVERERROR, "Internal Server Error");
     }
   }
 
   async getHistoryById(req, res) {
     const { id } = req.params;
+    const bearerToken = req.headers["authorization"].split(" ")[1];
+    const decoded = verify(bearerToken, process.env.SECRET);
     try {
-      const data = await getTransactionsByid(id);
+      const data = await getTransactionsByid(id, decoded.id);
 
       if (!data.length)
         return resFailure(res, BADREQUEST, "History isn't available");
 
-      return resSuccess(res, OK, "Success Get History", data[0]);
+      const historyData = { ...data[0], is_income: data[0].id_user === data[0].id_receiver || data[0].type === "topup" }
+      return resSuccess(res, OK, "Success Get History", historyData);
     } catch (error) {
       return resFailure(res, INTERNALSERVERERROR, "Internal Server Error", {});
     }
@@ -236,6 +242,74 @@ class Users {
       }
     });
   }
-}
 
+  async getPaymentToken(req, res) {
+    const bearerToken = req.headers["authorization"].split(" ")[1];
+    const decoded = verify(bearerToken, process.env.SECRET);
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return resFailure(res, BADREQUEST, errors.array()[0].msg);
+
+    const snap = new midtrans.Snap({ isProduction: false, serverKey: process.env.SERVER_KEY })
+    const midtransParam = {
+      "transaction_details": {
+        "order_id": `TOPUP-ID-${randString(18)}`,
+        "gross_amount": 10000
+      },
+      "credit_card": {
+        "secure": true
+      }
+    }
+
+    try {
+      const data = await getUserById(decoded.id);
+      const parameter = {
+        ...midtransParam,
+        customer_details: {
+          first_name: data[0].name,
+          last_name: "",
+          email: data[0].email,
+          phone: data[0].phone,
+        }
+      }
+
+      const createTransaction = await snap.createTransaction(parameter)
+      return resSuccess(res, CREATED, "Success get token", createTransaction);
+    } catch (error) {
+      return resFailure(res, INTERNALSERVERERROR, "Internal Server Error");
+    }
+  }
+
+  async processPayment(req, res) {
+    const { va_numbers, transaction_time, settlement_time, transaction_status, order_id, gross_amount } = req.body
+    const bearerToken = req.headers["authorization"].split(" ")[1];
+    const decoded = verify(bearerToken, process.env.SECRET);
+
+    try {
+      const findTransaction = await getTransactionsByOrderid(order_id)
+      const dataTopup = {
+        order_id,
+        va_number: va_numbers[0].va_number,
+        va_type: va_numbers[0].va_type,
+        status: transaction_status !== "settlement" ? 0 : 1,
+        amount: gross_amount,
+        paydate_at: settlement_time !== "undefined" ? settlement_time : null
+      }
+
+      if (!findTransaction.length) {
+        const topup = await insertTopup(dataTopup)
+        const transactions = await insertTransactions({ id_user: decoded.id, id_topup: topup.insertId, type: "topup", created_at: transaction_time });
+
+        return resSuccess(res, CREATED, "Success", { id: transactions.insertId });
+      }
+
+      const userData = await getUserById(decoded.id);
+      await updateTopup(dataTopup)
+      await updateUserBalance({ id: decoded.id, balance: userData[0].balance })
+      return resSuccess(res, CREATED, "Payment Succesfully");
+    } catch (error) {
+      return resFailure(res, INTERNALSERVERERROR, "Internal Server Error");
+    }
+  }
+}
 module.exports = new Users();

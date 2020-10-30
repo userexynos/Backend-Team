@@ -14,13 +14,9 @@ const {
   deletePhoneNumber,
   changePassword,
   getAllHistoryByUserId,
+  getPaymentToken,
   getUserById,
-  getAllUsers,
-  getUsersPaginate,
-  insertUser,
-  updateUser,
-  deleteUser,
-  updateUserBalance,
+  processPayment,
 } = require("../controllers/users");
 
 const validatePin = [
@@ -48,6 +44,15 @@ const validatePassword = [
     .withMessage("Password New cannot be null"),
 ];
 
+const validateAmount = [
+  body("amount")
+    .not()
+    .isEmpty()
+    .withMessage("Amount cannot be null")
+    .isNumeric()
+    .withMessage("Amount must be number string")
+]
+
 router
   .get("/history/:id", getHistoryById)
   .get("/histories", getAllHistoryByUserId)
@@ -56,7 +61,9 @@ router
   .get("/guide-topup", getAllTopup)
   .get("/:id", getUserById)
   .post("/photo", uploadImage)
+  .post("/get-token", validateAmount, getPaymentToken)
   .post("/transfer", validateTransfer, transferBalance)
+  .post("/process-topup", processPayment)
   .patch("/phone", validateAddPhone, addPhoneNumber)
   .patch("/create_pin", validatePin, createPin)
   .patch("/password", validatePassword, changePassword)
