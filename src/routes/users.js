@@ -11,6 +11,7 @@ const {
   addPhoneNumber,
   deletePhoneNumber,
   changePassword,
+  getHistoryById,
   getAllHistoryByUserId,
   getUserById,
 } = require("../controllers/users");
@@ -41,6 +42,7 @@ const validatePassword = [
 ];
 
 router
+  .get("/history/:id", getHistoryById)
   .get("/histories", getAllHistoryByUserId)
   .get("/detail", getUserByToken)
   .get("/search", findUsersData)

@@ -1,13 +1,9 @@
 const { validationResult } = require("express-validator");
 const { verify } = require("jsonwebtoken");
 const {
-  getUsers,
   getUserById,
-  getUsersPaginate,
-  insertUser,
   updateUserBalance,
   updateUser,
-  deleteUser,
   findUsers,
 } = require("../models/users");
 const upload = require("../helpers/multer");
