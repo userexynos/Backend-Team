@@ -308,6 +308,7 @@ class Users {
       await updateUserBalance({ id: decoded.id, balance: userData[0].balance })
       return resSuccess(res, CREATED, "Payment Succesfully");
     } catch (error) {
+      console.log(error)
       return resFailure(res, INTERNALSERVERERROR, "Internal Server Error");
     }
   }
