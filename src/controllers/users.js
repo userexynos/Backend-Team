@@ -325,6 +325,8 @@ class Users {
       }
 
       const userData = await getUserById(findTransaction[0].id_user);
+      console.log(findTransaction[0].id_user)
+      console.log(userData)
       await updateTopup(dataTopup)
       await updateUserBalance({ id: findTransaction[0].id_user, balance: userData[0].balance })
       return resSuccess(res, CREATED, "Payment Succesfully");
