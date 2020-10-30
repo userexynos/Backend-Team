@@ -20,7 +20,7 @@ const adminRouter = require("./src/routes/admin");
 // const transferRouter = require('./src/routes/transfer')
 
 const app = express();
-const prefix = process.env.PREFIX || "/api/v1";
+const prefix = process.env.PREFIX_URL || "/api/v1";
 
 app.use(express.static("public"));
 app.use(cors());
