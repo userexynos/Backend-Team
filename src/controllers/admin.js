@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
-const status = require('../helpers/status')
+const status = require("../helpers/status");
+const { getUserByEmail } = require("../models/users");
 const { verify } = require("jsonwebtoken");
 const {
   getUsers,
@@ -13,7 +14,7 @@ const {
 } = require("../models/users");
 const {
   getTransactionsByUserid,
-  getTransactions_Admin
+  getTransactions_Admin,
   // getAllTransactionsByUserid,
 } = require("../models/transactions");
 const upload = require("../helpers/multer");
@@ -29,22 +30,21 @@ const {
 } = require("../helpers/status");
 
 class Admin {
-
   async getUserById(req, res) {
-      const { id } = req.params;
-      try {
-        const data = await getUserById(id);
-        delete data[0].balance;
-        delete data[0].pin;
-        delete data[0].password;
-        if (!data.length)
-          return resFailure(res, BADREQUEST, "User id isn't available", {});
+    const { id } = req.params;
+    try {
+      const data = await getUserById(id);
+      delete data[0].balance;
+      delete data[0].pin;
+      delete data[0].password;
+      if (!data.length)
+        return resFailure(res, BADREQUEST, "User id isn't available", {});
 
-        return resSuccess(res, OK, "Success get user data", data[0]);
-      } catch (error) {
-        return resFailure(res, INTERNALSERVERERROR, "Internal Server Error", {});
-      }
+      return resSuccess(res, OK, "Success get user data", data[0]);
+    } catch (error) {
+      return resFailure(res, INTERNALSERVERERROR, "Internal Server Error", {});
     }
+  }
 
   async getAllUsers(req, res) {
     console.log();
@@ -69,19 +69,25 @@ class Admin {
 
   async insertUser(req, res) {
     if (
-      req.body.name &&
-      req.body.phone &&
-      req.body.email &&
-      req.body.password &&
-      req.body.balance &&
-      req.body.verified &&
-      req.body.pin
+      
+      req.body.name && 
+      req.body.email && 
+      req.body.password ||
+      req.body.pin ||
+      req.body.phone ||
+      req.body.verified
     ) {
       try {
         const password = await hashSync(req.body.password, genSaltSync(10));
         const newBody = { ...req.body, password: password };
-        await insertUser(newBody);
-        return resSuccess(res, CREATED, "Success add user data");
+
+        let checkEmail = await getUserByEmail(req.body.email);
+        if (checkEmail.length) {
+          return resFailure(res, UNAUTHORIZED, "Email has been taken", {});
+        } else {
+          await insertUser(newBody);
+          return resSuccess(res, CREATED, "Success add user data");
+        }
       } catch (error) {
         return resSuccess(res, INTERNALSERVERERROR, "Failed add user data");
       }
@@ -143,15 +149,15 @@ class Admin {
   }
 
   async getHistoryByUserId(req, res) {
-    const {id}= req.params
+    const { id } = req.params;
     try {
-      const data = await getTransactionsByUserid(id)
+      const data = await getTransactionsByUserid(id);
       if (!data.length)
-        return resSuccess(res, OK, "You don't have any transaction", [])
+        return resSuccess(res, OK, "You don't have any transaction", []);
 
-      return resSuccess(res, OK, "Success get Transactions History", data)
+      return resSuccess(res, OK, "Success get Transactions History", data);
     } catch (error) {
-      return resFailure(res, INTERNALSERVERERROR, "Internal Server Error", [])
+      return resFailure(res, INTERNALSERVERERROR, "Internal Server Error", []);
     }
   }
 
@@ -180,7 +186,7 @@ class Admin {
       if (!file)
         return resFailure(res, BADREQUEST, "Field photo must be filled");
 
-      const {id} = req.params
+      const { id } = req.params;
       try {
         const photo = `${process.env.BASE_URL}/images/${req.file.filename}`;
         await updateUser({ photo }, id);
@@ -194,30 +200,29 @@ class Admin {
 
   async getAllHistory_Admin(req, res) {
     try {
-      const data = await getTransactions_Admin()
+      const data = await getTransactions_Admin();
       if (!data.length)
         return res.status(status.OK).json({
           status: true,
           message: "Don't have any transaction",
-          data: []
-        })
+          data: [],
+        });
 
       res.status(status.OK).json({
         status: true,
         message: "Success get All data Transaction",
-        data
-      })
+        data,
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
 
       res.status(status.INTERNALSERVERERROR).json({
         status: false,
         message: "Failed get history transaction data",
-        data: []
-      })
+        data: [],
+      });
     }
   }
-
 }
 
 module.exports = new Admin();
