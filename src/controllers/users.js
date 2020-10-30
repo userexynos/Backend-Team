@@ -281,31 +281,52 @@ class Users {
   }
 
   async processPayment(req, res) {
-    const { va_numbers, transaction_time, settlement_time, transaction_status, order_id, gross_amount } = req.body
+    const { va_numbers, transaction_time, order_id, gross_amount } = req.body
     const bearerToken = req.headers["authorization"].split(" ")[1];
     const decoded = verify(bearerToken, process.env.SECRET);
+
+    try {
+      const dataTopup = {
+        order_id,
+        va_number: va_numbers[0].va_number,
+        va_type: va_numbers[0].bank,
+        status: 0,
+        amount: gross_amount,
+        paydate_at: null
+      }
+      const topup = await insertTopup(dataTopup)
+      const transactions = await insertTransactions({ id_user: decoded.id, id_topup: topup.insertId, type: "topup", created_at: transaction_time });
+
+      return resSuccess(res, CREATED, "Success", { id: transactions.insertId });
+    } catch (error) {
+      console.log(error)
+      return resFailure(res, INTERNALSERVERERROR, "Internal Server Error");
+    }
+  }
+
+  async midtransPaymentProcess(req, res) {
+    const { va_numbers, settlement_time, transaction_status, order_id, gross_amount } = req.body
 
     try {
       const findTransaction = await getTransactionsByOrderid(order_id)
       const dataTopup = {
         order_id,
         va_number: va_numbers[0].va_number,
-        va_type: va_numbers[0].va_type,
+        va_type: va_numbers[0].bank,
         status: transaction_status !== "settlement" ? 0 : 1,
         amount: gross_amount,
         paydate_at: settlement_time !== "undefined" ? settlement_time : null
       }
 
       if (!findTransaction.length) {
-        const topup = await insertTopup(dataTopup)
-        const transactions = await insertTransactions({ id_user: decoded.id, id_topup: topup.insertId, type: "topup", created_at: transaction_time });
-
-        return resSuccess(res, CREATED, "Success", { id: transactions.insertId });
+        return resSuccess(res, CREATED, "InProcess");
+      } else if (transaction_status === "pending") {
+        return resSuccess(res, CREATED, "Payment Pending");
       }
 
-      const userData = await getUserById(decoded.id);
+      const userData = await getUserById(findTransaction[0].id_user);
       await updateTopup(dataTopup)
-      await updateUserBalance({ id: decoded.id, balance: userData[0].balance })
+      await updateUserBalance({ id: findTransaction[0].id_user, balance: userData[0].balance })
       return resSuccess(res, CREATED, "Payment Succesfully");
     } catch (error) {
       console.log(error)

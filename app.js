@@ -16,6 +16,7 @@ const indexRouter = require("./src/routes/index");
 const authRouter = require("./src/routes/auth");
 const usersRouter = require("./src/routes/users");
 const adminRouter = require("./src/routes/admin");
+const { midtransPaymentProcess } = require("./src/controllers/users");
 // const topupRouter = require('./src/routes/topup')
 // const transferRouter = require('./src/routes/transfer')
 
@@ -32,7 +33,7 @@ app.use(`${prefix}/`, indexRouter);
 app.use(`${prefix}/auth`, authRouter);
 app.use(`${prefix}/users`, verify, usersRouter);
 app.use(`${prefix}/admin`, verifyAdmin, adminRouter);
-
+app.use(`${prefix}/midtrans/paymentProcess`, midtransPaymentProcess)
 
 // app.use(`${prefix}/topup`, verifyAdmin, topupRouter)
 // app.use(`${prefix}/transfer`, transferRouter)
