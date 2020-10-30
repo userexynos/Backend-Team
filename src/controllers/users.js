@@ -13,6 +13,7 @@ const {
 const upload = require("../helpers/multer");
 const {
   getAllTransactionsByUserid,
+  getAllTransactionsByUseridFilter,
   getTransactionsByUserid,
   getTransactionsByid,
   insertTransactions,
@@ -29,7 +30,6 @@ const {
 } = require("../helpers/status");
 
 class Users {
-
   async getUserById(req, res) {
     const { id } = req.params;
     try {
@@ -95,16 +95,24 @@ class Users {
   }
 
   async getAllHistoryByUserId(req, res) {
-    const { limit, offset } = req.query;
+    const { date_start, date_end, limit, offset } = req.query;
     const bearerToken = req.headers["authorization"].split(" ")[1];
     const decoded = verify(bearerToken, process.env.SECRET);
 
     try {
-      const data = await getAllTransactionsByUserid(decoded.id, limit, offset);
-      if (!data.length)
-        return resSuccess(res, OK, "You don't have any transaction", []);
+      if (!date_start && !date_end) {
+        const data = await getAllTransactionsByUserid( decoded.id, limit, offset);
+        if (!data.length)
+          return resSuccess(res, OK, "You don't have any transaction", []);
 
-      return resSuccess(res, OK, "Success get Transactions History", data);
+        return resSuccess(res, OK, "Success get Transactions History", data);
+      } else {
+        const data = await getAllTransactionsByUseridFilter( decoded.id, date_start, date_end, limit, offset );
+        if (!data.length)
+          return resSuccess(res, OK, "You don't have any transaction", []);
+
+        return resSuccess(res, OK, "Success get Transactions History", data);
+      }
     } catch (error) {
       return resFailure(res, INTERNALSERVERERROR, "Internal Server Error", []);
     }

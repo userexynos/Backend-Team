@@ -10,6 +10,7 @@ const {
   getHistoryByUserId,
   uploadImage,
   getAllHistory_Admin,
+  getHistoryById_Admin,
   findUsersData,
 } = require("../controllers/admin");
 
@@ -39,6 +40,7 @@ router
   .patch("/user/update-user-balance/:id", updateUserBalance)
   .delete("/user/:id", deleteUser)
   //GET ALL TRANSACTION BY ADMIN
-  .get("/history", getAllHistory_Admin);
+  .get("/history", getAllHistory_Admin)
+  .get("/history/:id", getHistoryById_Admin);
 
 module.exports = router;

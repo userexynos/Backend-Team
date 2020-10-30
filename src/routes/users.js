@@ -15,12 +15,6 @@ const {
   changePassword,
   getAllHistoryByUserId,
   getUserById,
-  getAllUsers,
-  getUsersPaginate,
-  insertUser,
-  updateUser,
-  deleteUser,
-  updateUserBalance,
 } = require("../controllers/users");
 
 const validatePin = [
@@ -49,8 +43,7 @@ const validatePassword = [
 ];
 
 router
-  .get("/history/:id", getHistoryById)
-  .get("/histories", getAllHistoryByUserId)
+  .get("/history", getAllHistoryByUserId)
   .get("/detail", getUserByToken)
   .get("/search", findUsersData)
   .get("/guide-topup", getAllTopup)

@@ -13,8 +13,10 @@ const {
 } = require("../models/users");
 const {
   getTransactionsByUserid,
-  getTransactions_Admin
-  // getAllTransactionsByUserid,
+  getTransactions_Admin,
+  getTransactionsById_Admin,
+  getTransactions_AdminFilter,
+  getTransactionsById_AdminFilter,
 } = require("../models/transactions");
 const upload = require("../helpers/multer");
 const { compareSync, hashSync, genSaltSync } = require("bcryptjs");
@@ -193,28 +195,44 @@ class Admin {
   }
 
   async getAllHistory_Admin(req, res) {
+    const { date_start, date_end, limit, offset } = req.query;
     try {
-      const data = await getTransactions_Admin()
-      if (!data.length)
-        return res.status(status.OK).json({
-          status: true,
-          message: "Don't have any transaction",
-          data: []
-        })
+      if (!date_start && !date_end) {
+        const data = await getTransactions_Admin(limit, offset);
+        if (!data.length)
+          return resSuccess(res, OK, "You don't have any transaction", []);
 
-      res.status(status.OK).json({
-        status: true,
-        message: "Success get All data Transaction",
-        data
-      })
+        return resSuccess(res, OK, "Success get Transactions History", data);
+      } else {
+        const data = await getTransactions_AdminFilter( date_start, date_end, limit, offset );
+        if (!data.length)
+          return resSuccess(res, OK, "You don't have any transaction", []);
+
+        return resSuccess(res, OK, "Success get Transactions History", data);
+      }
     } catch (error) {
-      console.log(error)
+      return resFailure(res, INTERNALSERVERERROR, "Internal Server Error", []);
+    }
+  }
+  async getHistoryById_Admin(req, res) {
+    const { date_start, date_end, limit, offset } = req.query
+    const {id} = req.params
+    try {
+      if (!date_start && !date_end) {
+        const data = await getTransactionsById_Admin(id, limit, offset);
+        if (!data.length)
+          return resSuccess(res, OK, "You don't have any transaction", []);
 
-      res.status(status.INTERNALSERVERERROR).json({
-        status: false,
-        message: "Failed get history transaction data",
-        data: []
-      })
+        return resSuccess(res, OK, "Success get Transactions History", data);
+      } else {
+        const data = await getTransactionsById_AdminFilter(id, date_start, date_end, limit, offset );
+        if (!data.length)
+          return resSuccess(res, OK, "You don't have any transaction", []);
+
+        return resSuccess(res, OK, "Success get Transactions History", data);
+      }
+    } catch (error) {
+      return resFailure(res, INTERNALSERVERERROR, "Internal Server Error", []);
     }
   }
 
