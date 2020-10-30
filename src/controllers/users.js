@@ -254,7 +254,7 @@ class Users {
     const midtransParam = {
       "transaction_details": {
         "order_id": `TOPUP-ID-${randString(18)}`,
-        "gross_amount": 10000
+        "gross_amount": req.body.amount
       },
       "credit_card": {
         "secure": true
@@ -327,8 +327,8 @@ class Users {
       const userData = await getUserById(findTransaction[0].id_user);
       console.log(findTransaction[0].id_user)
       console.log(userData)
-      await updateTopup(dataTopup)
-      await updateUserBalance({ id: findTransaction[0].id_user, balance: userData[0].balance })
+      await updateTopup(dataTopup, { order_id: findTransaction[0].order_id })
+      await updateUserBalance({ id: findTransaction[0].id_user, balance: userData[0].balance + gross_amount })
       return resSuccess(res, CREATED, "Payment Succesfully");
     } catch (error) {
       console.log(error)
