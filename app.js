@@ -33,7 +33,7 @@ app.use(`${prefix}/`, indexRouter);
 app.use(`${prefix}/auth`, authRouter);
 app.use(`${prefix}/users`, verify, usersRouter);
 app.use(`${prefix}/admin`, verifyAdmin, adminRouter);
-app.use(`${prefix}/midtrans/paymentProcess`, midtransPaymentProcess)
+app.post(`${prefix}/midtrans/payment-process`, midtransPaymentProcess)
 
 // app.use(`${prefix}/topup`, verifyAdmin, topupRouter)
 // app.use(`${prefix}/transfer`, transferRouter)
