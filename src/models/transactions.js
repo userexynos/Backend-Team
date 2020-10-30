@@ -5,12 +5,9 @@ class Transactions {
     getTransactions() {
         return query("SELECT a.id, a.note, a.total, b.name AS _from, c.name AS _to FROM transactions AS a INNER JOIN users AS b ON a.id_from_user = b.id INNER JOIN users AS c ON a.id_to_user = c.id")
     }
-
     getTransaction(id) {
         return query("SELECT id FROM transactions WHERE id = ?", [id])
     }
-
-
     getAllTransactionsByUserid(id, limit = 5, offset = 1) {
         const limitNew = !isNaN(parseInt(limit)) ? parseInt(limit) : 5
         const offsetNew = !isNaN(parseInt(offset)) ? parseInt(offset) : 1
@@ -23,7 +20,18 @@ class Transactions {
 
         return query(`SELECT a.id, a.note, a.total, b.name AS from_name, b.photo AS from_photo, c.name AS to_name, c.photo AS to_photo, b.email AS from_email, c.email AS to_email, a.created_at FROM transactions AS a INNER JOIN users AS b ON a.id_from_user = b.id INNER JOIN users AS c ON a.id_to_user = c.id WHERE DATE(a.created_at) between ? and ? AND a.id_from_user = ? OR DATE(a.created_at) between ? and ? AND a.id_to_user = ? ORDER BY a.created_at DESC LIMIT ? OFFSET ?`, [ date_start, date_end, id, date_start, date_end, id, limitNew, (offsetNew - 1) * limitNew])
     }
+    getAllTransactionsByUseridFilterIncome(id, limit = 5, offset = 1) {
+        const limitNew = !isNaN(parseInt(limit)) ? parseInt(limit) : 5
+        const offsetNew = !isNaN(parseInt(offset)) ? parseInt(offset) : 1
 
+        return query("SELECT a.id, a.note, a.total, b.name AS from_name, b.photo AS from_photo, c.name AS to_name, c.photo AS to_photo, b.email AS from_email, c.email AS to_email, a.created_at FROM transactions AS a INNER JOIN users AS b ON a.id_from_user = b.id INNER JOIN users AS c ON a.id_to_user = c.id WHERE a.id_to_user = ? ORDER BY a.created_at DESC LIMIT ? OFFSET ?", [id, id, limitNew, (offsetNew - 1) * limitNew])
+    }
+    getAllTransactionsByUseridFilterExpense(id, limit = 5, offset = 1) {
+        const limitNew = !isNaN(parseInt(limit)) ? parseInt(limit) : 5
+        const offsetNew = !isNaN(parseInt(offset)) ? parseInt(offset) : 1
+
+        return query("SELECT a.id, a.note, a.total, b.name AS from_name, b.photo AS from_photo, c.name AS to_name, c.photo AS to_photo, b.email AS from_email, c.email AS to_email, a.created_at FROM transactions AS a INNER JOIN users AS b ON a.id_from_user = b.id INNER JOIN users AS c ON a.id_to_user = c.id WHERE a.id_from_user = ? ORDER BY a.created_at DESC LIMIT ? OFFSET ?", [id, id, limitNew, (offsetNew - 1) * limitNew])
+    }
     getTransactionsByUserid(id) {
         // console.log(id);
         return query("SELECT a.id, a.note, a.total, b.name AS from_name, c.name AS to_name, b.email AS from_email, c.email AS to_email, a.created_at FROM transactions AS a INNER JOIN users AS b ON a.id_from_user = b.id INNER JOIN users AS c ON a.id_to_user = c.id WHERE a.id_from_user = ? OR a.id_to_user = ? LIMIT 5", [id, id])

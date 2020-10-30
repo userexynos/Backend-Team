@@ -14,6 +14,8 @@ const upload = require("../helpers/multer");
 const {
   getAllTransactionsByUserid,
   getAllTransactionsByUseridFilter,
+  getAllTransactionsByUseridFilterIncome,
+  getAllTransactionsByUseridFilterExpense,
   getTransactionsByUserid,
   getTransactionsByid,
   insertTransactions,
@@ -95,13 +97,25 @@ class Users {
   }
 
   async getAllHistoryByUserId(req, res) {
-    const { date_start, date_end, limit, offset } = req.query;
+    const { date_start, date_end, income, expense, limit, offset } = req.query;
     const bearerToken = req.headers["authorization"].split(" ")[1];
     const decoded = verify(bearerToken, process.env.SECRET);
 
     try {
-      if (!date_start && !date_end) {
+      if (!date_start && !date_end && !income && !expense) {
         const data = await getAllTransactionsByUserid( decoded.id, limit, offset);
+        if (!data.length)
+          return resSuccess(res, OK, "You don't have any transaction", []);
+
+        return resSuccess(res, OK, "Success get Transactions History", data);
+      } else if(income===`true`){
+        const data = await getAllTransactionsByUseridFilterIncome( decoded.id, limit, offset);
+        if (!data.length)
+          return resSuccess(res, OK, "You don't have any transaction", []);
+
+        return resSuccess(res, OK, "Success get Transactions History", data);
+      }else if(expense===`true`){
+        const data = await getAllTransactionsByUseridFilterExpense( decoded.id, limit, offset);
         if (!data.length)
           return resSuccess(res, OK, "You don't have any transaction", []);
 

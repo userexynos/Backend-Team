@@ -2,14 +2,12 @@ const express = require("express");
 const router = express.Router();
 const { body } = require("express-validator");
 const { getAllTopup } = require("../controllers/topup");
-const { verifyAdmin } = require("../middlewares/auth");
 const {
   uploadImage,
   transferBalance,
   findUsersData,
   createPin,
   getUserByToken,
-  getHistoryById,
   addPhoneNumber,
   deletePhoneNumber,
   changePassword,
@@ -43,7 +41,7 @@ const validatePassword = [
 ];
 
 router
-  .get("/history", getAllHistoryByUserId)
+  .get("/histories", getAllHistoryByUserId)
   .get("/detail", getUserByToken)
   .get("/search", findUsersData)
   .get("/guide-topup", getAllTopup)
