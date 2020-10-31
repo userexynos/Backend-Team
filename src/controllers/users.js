@@ -260,7 +260,7 @@ class Users {
         "secure": true
       },
       callbacks: {
-        finish: "https://webhook.site/c83776c8-18b8-4b05-bb54-038ffcc5092f"
+        finish: "https://784d665fc2f90f1744f772d8c55ee1a8.m.pipedream.net"
       }
     }
 
