@@ -149,6 +149,7 @@ class Users {
       const transfer = await insertTransfer({ id_receiver: id, note, amount: total, balance: currentBalanceFrom })
       const transactions = await insertTransactions({ id_user: decoded.id, id_transfer: transfer.insertId, type: "transfer", created_at: new Date() });
 
+      console.log(new Date().toDateString())
       return resSuccess(res, OK, "Success Transfer", { id: transactions.insertId });
     } catch (error) {
       console.log(error)
