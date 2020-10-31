@@ -247,18 +247,21 @@ class Users {
     const bearerToken = req.headers["authorization"].split(" ")[1];
     const decoded = verify(bearerToken, process.env.SECRET);
     const errors = validationResult(req);
+    const order_id = randString(18)
     if (!errors.isEmpty())
       return resFailure(res, BADREQUEST, errors.array()[0].msg);
 
     const snap = new midtrans.Snap({ isProduction: false, serverKey: process.env.SERVER_KEY })
     const midtransParam = {
       "transaction_details": {
-        "order_id": `TOPUP-ID-${randString(18)}`,
+        "order_id": `TOPUP-ID-${order_id}`,
         "gross_amount": req.body.amount
       },
       "item_details": [{
-        "type": "Topup",
-        "amount": `Rp ${req.body.amount}`
+        "id": order_id,
+        "name": `Topup Rp ${req.body.amount}`,
+        "price": req.body.amount,
+        "quantity": 1
       }],
       "credit_card": {
         "secure": true
