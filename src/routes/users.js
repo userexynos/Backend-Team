@@ -17,6 +17,7 @@ const {
   getPaymentToken,
   getUserById,
   processPayment,
+  getHistoryPayment,
 } = require("../controllers/users");
 
 const validatePin = [
@@ -54,6 +55,7 @@ const validateAmount = [
 ]
 
 router
+  .get("/history/topup/:id", getHistoryPayment)
   .get("/history/:id", getHistoryById)
   .get("/histories", getAllHistoryByUserId)
   .get("/detail", getUserByToken)

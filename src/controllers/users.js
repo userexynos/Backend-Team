@@ -163,7 +163,7 @@ class Users {
     try {
       const data = await getTransactionsByid(id, decoded.id);
 
-      if (!data.length)
+      if (!data.length || data[0].type === "topup")
         return resFailure(res, BADREQUEST, "History isn't available");
 
       const historyData = { ...data[0], is_income: data[0].id_user === data[0].id_receiver || data[0].type === "topup" }
@@ -258,6 +258,9 @@ class Users {
       },
       "credit_card": {
         "secure": true
+      },
+      callbacks: {
+        finish: "https://webhook.site/c83776c8-18b8-4b05-bb54-038ffcc5092f"
       }
     }
 
@@ -280,6 +283,22 @@ class Users {
     }
   }
 
+  async getHistoryPayment(req, res) {
+    const { order_id } = req.query
+    try {
+      const data = await getTransactionsByOrderid(order_id);
+
+      if (!data.length)
+        return resFailure(res, BADREQUEST, "History isn't available");
+      else if (order_id === undefined || order_id === null)
+        return resFailure(res, BADREQUEST, "Bad Request");
+
+      return resSuccess(res, OK, "Success Get History", data[0]);
+    } catch (error) {
+      return resFailure(res, INTERNALSERVERERROR, "Internal Server Error");
+    }
+  }
+
   async processPayment(req, res) {
     const { va_numbers, transaction_time, order_id, gross_amount } = req.body
     const bearerToken = req.headers["authorization"].split(" ")[1];
@@ -291,13 +310,13 @@ class Users {
         va_number: va_numbers[0].va_number,
         va_type: va_numbers[0].bank,
         status: 0,
-        amount: gross_amount,
+        amount: parseInt(gross_amount),
         paydate_at: null
       }
       const topup = await insertTopup(dataTopup)
-      const transactions = await insertTransactions({ id_user: decoded.id, id_topup: topup.insertId, type: "topup", created_at: transaction_time });
+      await insertTransactions({ id_user: decoded.id, id_topup: topup.insertId, type: "topup", created_at: transaction_time });
 
-      return resSuccess(res, CREATED, "Success", { id: transactions.insertId });
+      return resSuccess(res, CREATED, "Success", { id: order_id });
     } catch (error) {
       console.log(error)
       return resFailure(res, INTERNALSERVERERROR, "Internal Server Error");
@@ -319,7 +338,7 @@ class Users {
       }
 
       if (!findTransaction.length) {
-        return resSuccess(res, CREATED, "InProcess");
+        return resSuccess(res, UNAUTHORIZED, "Bad Request");
       } else if (transaction_status === "pending") {
         return resSuccess(res, CREATED, "Payment Pending");
       }
