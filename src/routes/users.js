@@ -55,7 +55,7 @@ const validateAmount = [
 ]
 
 router
-  .get("/history/topup/:id", getHistoryPayment)
+  .get("/history/topup", getHistoryPayment)
   .get("/history/:id", getHistoryById)
   .get("/histories", getAllHistoryByUserId)
   .get("/detail", getUserByToken)
