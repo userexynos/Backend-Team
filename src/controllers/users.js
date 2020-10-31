@@ -256,11 +256,12 @@ class Users {
         "order_id": `TOPUP-ID-${randString(18)}`,
         "gross_amount": req.body.amount
       },
+      "item_details": [{
+        "type": "Topup",
+        "amount": `Rp ${req.body.amount}`
+      }],
       "credit_card": {
         "secure": true
-      },
-      callbacks: {
-        finish: "https://784d665fc2f90f1744f772d8c55ee1a8.m.pipedream.net"
       }
     }
 
