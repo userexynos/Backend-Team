@@ -259,6 +259,9 @@ class Users {
       "credit_card": {
         "secure": true
       },
+      callbacks: {
+        finish: "https://webhook.site/c83776c8-18b8-4b05-bb54-038ffcc5092f"
+      }
     }
 
     try {
