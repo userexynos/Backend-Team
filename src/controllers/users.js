@@ -306,7 +306,7 @@ class Users {
   }
 
   async processPayment(req, res) {
-    const { va_numbers, transaction_time, order_id, gross_amount } = req.body
+    const { va_numbers, order_id, gross_amount } = req.body
     const bearerToken = req.headers["authorization"].split(" ")[1];
     const decoded = verify(bearerToken, process.env.SECRET);
 
@@ -320,7 +320,7 @@ class Users {
         paydate_at: null
       }
       const topup = await insertTopup(dataTopup)
-      await insertTransactions({ id_user: decoded.id, id_topup: topup.insertId, type: "topup", created_at: transaction_time });
+      await insertTransactions({ id_user: decoded.id, id_topup: topup.insertId, type: "topup" });
 
       return resSuccess(res, CREATED, "Success", { id: order_id });
     } catch (error) {
@@ -340,7 +340,7 @@ class Users {
         va_type: va_numbers[0].bank,
         status: transaction_status !== "settlement" ? 0 : 1,
         amount: parseInt(gross_amount),
-        paydate_at: settlement_time !== "undefined" ? settlement_time : null
+        paydate_at: settlement_time !== "undefined" ? new Date() : null
       }
 
       if (!findTransaction.length) {
