@@ -96,7 +96,7 @@ class Transactions {
                 ON a.id_user = d.id
             LEFT JOIN users AS e
                 ON b.id_receiver = d.id
-            WHERE (a.type = 'topup' AND c.order_id = ?)
+            WHERE a.type = 'topup' AND c.order_id = ?
             ORDER BY a.created_at DESC
         `, [orderId])
     }

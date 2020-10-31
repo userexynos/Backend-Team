@@ -290,6 +290,7 @@ class Users {
 
   async getHistoryPayment(req, res) {
     const { order_id } = req.query
+    console.log(order_id)
     try {
       const data = await getTransactionsByOrderid(order_id);
 
