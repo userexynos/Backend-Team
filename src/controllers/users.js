@@ -280,6 +280,7 @@ class Users {
       const createTransaction = await snap.createTransaction(parameter)
       return resSuccess(res, CREATED, "Success get token", createTransaction);
     } catch (error) {
+      console.log(error)
       return resFailure(res, INTERNALSERVERERROR, "Internal Server Error");
     }
   }
