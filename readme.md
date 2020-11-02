@@ -16,9 +16,9 @@
 </p>
 
 ### # ABOUT
-Halo, Nama saya <strong>Api Al Rahman</strong>, saya dari arkademy jurusan <strong>Mobile Fullstack Developer</strong> Batch 18.
+Halo, kami dari <strong>Team Semicolon</strong> mempersembahkan.
 
-Project yang saya buat kali ini bernama <strong>ZWallet</strong> yang mempunyai tujuan untuk menyimpan uang dalam keadaan virtual tanpa harus menaruh uang di dalam dompet. <strong>ZWallet</strong> juga dibekali dengan fitur transfer saldo, top up game dan lainnya yang berhubungan dengan virtual.
+Project yang Kami buat kali ini bernama <strong>ZWallet</strong> yang mempunyai tujuan untuk menyimpan uang dalam keadaan virtual tanpa harus menaruh uang di dalam dompet. <strong>ZWallet</strong> juga dibekali dengan fitur transfer saldo, top up game dan lainnya yang berhubungan dengan virtual.
 
 Saat ini <strong>ZWallet API</strong> dibuat hanya dengan <strong>Javascript, Node js dan express</strong>,
 
