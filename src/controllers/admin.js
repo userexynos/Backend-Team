@@ -13,8 +13,7 @@ const {
   findUsers,
 } = require("../models/users");
 const {
-  getTransactionsByUserid,
-  getTransactions_Admin,
+  getAllTransactions
   // getAllTransactionsByUserid,
 } = require("../models/transactions");
 const upload = require("../helpers/multer");
@@ -69,9 +68,9 @@ class Admin {
 
   async insertUser(req, res) {
     if (
-      
-      req.body.name && 
-      req.body.email && 
+
+      req.body.name &&
+      req.body.email &&
       req.body.password ||
       req.body.pin ||
       req.body.phone ||
@@ -221,6 +220,21 @@ class Admin {
         message: "Failed get history transaction data",
         data: [],
       });
+    }
+  }
+
+  async getAllHistory(req, res) {
+    const { limit, offset } = req.query;
+
+    try {
+      let history = await getAllTransactions(limit, offset);
+      if (!history.length)
+        return resSuccess(res, OK, "You don't have any transaction", []);
+
+      return resSuccess(res, OK, "Success get Transactions History", history);
+    } catch (error) {
+      console.log(error)
+      return resFailure(res, INTERNALSERVERERROR, "Internal Server Error", {});
     }
   }
 }

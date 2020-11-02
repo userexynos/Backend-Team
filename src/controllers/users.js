@@ -19,7 +19,10 @@ const {
   insertTransfer,
   insertTopup,
   getTransactionsByOrderid,
-  updateTopup
+  updateTopup,
+  getAllTransactionsByIncomeUserid,
+  getAllTransactionsByExpenseUserid,
+  getAllTransactionsByDateUserid
 } = require("../models/transactions");
 const {
   resSuccess,
@@ -98,17 +101,44 @@ class Users {
   }
 
   async getAllHistoryByUserId(req, res) {
-    const { limit, offset } = req.query;
+    const { limit, offset, filter, date_start, date_end } = req.query;
     const bearerToken = req.headers["authorization"].split(" ")[1];
     const decoded = verify(bearerToken, process.env.SECRET);
 
     try {
-      let history = await getAllTransactionsByUserid(decoded.id, limit, offset);
-      history = history.map(item => ({ ...item, is_income: decoded.id === item.id_receiver || item.type === "topup" }))
       const incomer = await getIncomeTransaction(decoded.id)
       const expenser = await getExpenseTransaction(decoded.id)
       const income = (incomer[0].transfer ? incomer[0].transfer : 0) + incomer[0].topup
       const expense = expenser[0].transfer ? expenser[0].transfer : 0
+
+      if (filter === "income") {
+        let history = await getAllTransactionsByIncomeUserid(decoded.id, limit, offset);
+        history = history.map(item => ({ ...item, is_income: true }))
+        if (!history.length)
+          return resSuccess(res, OK, "You don't have any transaction", { expense, income, history: [] });
+
+        return resSuccess(res, OK, "Success get Transactions History", { expense, income, history });
+      } else if (filter === "expense") {
+        let history = await getAllTransactionsByExpenseUserid(decoded.id, limit, offset);
+        history = history.map(item => ({ ...item, is_income: false }))
+        if (!history.length)
+          return resSuccess(res, OK, "You don't have any transaction", { expense, income, history: [] });
+
+        return resSuccess(res, OK, "Success get Transactions History", { expense, income, history });
+      } else if (filter === "date") {
+        if (!date_start || !date_end)
+          return resSuccess(res, OK, "You don't have any transaction", { expense, income, history: [] });
+
+        let history = await getAllTransactionsByDateUserid(decoded.id, limit, offset, date_start, date_end);
+        history = history.map(item => ({ ...item, is_income: decoded.id === item.id_receiver || item.type === "topup" }))
+        if (!history.length)
+          return resSuccess(res, OK, "You don't have any transaction", { expense, income, history: [] });
+
+        return resSuccess(res, OK, "Success get Transactions History", { expense, income, history });
+      }
+
+      let history = await getAllTransactionsByUserid(decoded.id, limit, offset);
+      history = history.map(item => ({ ...item, is_income: decoded.id === item.id_receiver || item.type === "topup" }))
       if (!history.length)
         return resSuccess(res, OK, "You don't have any transaction", { expense: 0, income: 0, history: [] });
 

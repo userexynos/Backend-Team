@@ -11,7 +11,29 @@ class Transactions {
     }
 
 
-    getAllTransactionsByUserid(id, limit = 5, offset = 1) {
+    getAllTransactions(limit = 5, offset = 1) {
+        const limitNew = !isNaN(parseInt(limit)) ? parseInt(limit) : 5
+        const offsetNew = !isNaN(parseInt(offset)) ? parseInt(offset) : 1
+
+        return query(`
+            SELECT a.id, a.type, a.id_user,  d.name, d.photo,
+                c.amount AS amount_topup, c.va_number, c.va_type, c.order_id, c.status, a.created_at, c.paydate_at,
+                e.name AS name_receiver, e.photo AS photo_receiver, b.id_receiver, b.note, b.balance, b.amount
+            FROM transactions AS a
+            LEFT JOIN transfer_history AS b
+                ON a.id_transfer = b.id
+            LEFT JOIN topup_history AS c
+                ON a.id_topup = c.id
+            INNER JOIN users AS d
+                ON a.id_user = d.id
+            LEFT JOIN users AS e
+                ON b.id_receiver = d.id
+            ORDER BY a.created_at DESC
+            LIMIT ? OFFSET ?
+        `, [limitNew, (offsetNew - 1) * limitNew])
+    }
+
+    getAllTransactionsByUserid(id, limit = 5, offset = 1, filter = 1) {
         const limitNew = !isNaN(parseInt(limit)) ? parseInt(limit) : 5
         const offsetNew = !isNaN(parseInt(offset)) ? parseInt(offset) : 1
 
@@ -33,6 +55,77 @@ class Transactions {
             ORDER BY a.created_at DESC
             LIMIT ? OFFSET ?
         `, [id, id, id, limitNew, (offsetNew - 1) * limitNew])
+    }
+
+    getAllTransactionsByIncomeUserid(id, limit = 5, offset = 1) {
+        const limitNew = !isNaN(parseInt(limit)) ? parseInt(limit) : 5
+        const offsetNew = !isNaN(parseInt(offset)) ? parseInt(offset) : 1
+
+        return query(`
+            SELECT a.id, a.type, a.id_user,  d.name, d.photo,
+                c.amount AS amount_topup, c.va_number, c.va_type, c.order_id, c.status, a.created_at, c.paydate_at,
+                e.name AS name_receiver, e.photo AS photo_receiver, b.id_receiver, b.note, b.balance, b.amount
+            FROM transactions AS a
+            LEFT JOIN transfer_history AS b
+                ON a.id_transfer = b.id
+            LEFT JOIN topup_history AS c
+                ON a.id_topup = c.id
+            INNER JOIN users AS d
+                ON a.id_user = d.id
+            LEFT JOIN users AS e
+                ON b.id_receiver = d.id
+            WHERE (b.id_receiver = ? AND a.type = 'transfer')
+            OR (a.type = 'topup' AND a.id_user = ?)
+            ORDER BY a.created_at DESC
+            LIMIT ? OFFSET ?
+        `, [id, id, limitNew, (offsetNew - 1) * limitNew])
+    }
+
+    getAllTransactionsByExpenseUserid(id, limit = 5, offset = 1) {
+        const limitNew = !isNaN(parseInt(limit)) ? parseInt(limit) : 5
+        const offsetNew = !isNaN(parseInt(offset)) ? parseInt(offset) : 1
+
+        return query(`
+            SELECT a.id, a.type, a.id_user,  d.name, d.photo,
+                c.amount AS amount_topup, c.va_number, c.va_type, c.order_id, c.status, a.created_at, c.paydate_at,
+                e.name AS name_receiver, e.photo AS photo_receiver, b.id_receiver, b.note, b.balance, b.amount
+            FROM transactions AS a
+            LEFT JOIN transfer_history AS b
+                ON a.id_transfer = b.id
+            LEFT JOIN topup_history AS c
+                ON a.id_topup = c.id
+            INNER JOIN users AS d
+                ON a.id_user = d.id
+            LEFT JOIN users AS e
+                ON b.id_receiver = d.id
+            WHERE a.id_user = ? AND a.type = 'transfer'
+            ORDER BY a.created_at DESC
+            LIMIT ? OFFSET ?
+        `, [id, limitNew, (offsetNew - 1) * limitNew])
+    }
+
+    getAllTransactionsByDateUserid(id, limit = 5, offset = 1, date_start, date_end) {
+        const limitNew = !isNaN(parseInt(limit)) ? parseInt(limit) : 5
+        const offsetNew = !isNaN(parseInt(offset)) ? parseInt(offset) : 1
+
+        return query(`
+            SELECT a.id, a.type, a.id_user,  d.name, d.photo,
+                c.amount AS amount_topup, c.va_number, c.va_type, c.order_id, c.status, a.created_at, c.paydate_at,
+                e.name AS name_receiver, e.photo AS photo_receiver, b.id_receiver, b.note, b.balance, b.amount
+            FROM transactions AS a
+            LEFT JOIN transfer_history AS b
+                ON a.id_transfer = b.id
+            LEFT JOIN topup_history AS c
+                ON a.id_topup = c.id
+            INNER JOIN users AS d
+                ON a.id_user = d.id
+            LEFT JOIN users AS e
+                ON b.id_receiver = d.id
+            WHERE ((a.type = 'transfer' AND (a.id_user = ? OR b.id_receiver = ?))
+            OR (a.type = 'topup' AND a.id_user = ?)) AND a.created_at BETWEEN ? AND ?
+            ORDER BY a.created_at DESC
+            LIMIT ? OFFSET ?
+        `, [id, id, id, date_start, date_end, limitNew, (offsetNew - 1) * limitNew])
     }
 
     getIncomeTransaction(id) {
