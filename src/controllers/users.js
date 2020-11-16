@@ -34,6 +34,8 @@ const {
   UNAUTHORIZED,
 } = require("../helpers/status");
 
+const admin = require("firebase-admin");
+
 class Users {
   async getUserById(req, res) {
     const { id } = req.params;
@@ -245,6 +247,17 @@ class Users {
         id_user: decoded.id,
         id_transfer: transfer.insertId,
         type: "transfer",
+      });
+
+      admin.messaging().sendToDevice(checkTo[0].device, {
+        data: {
+          id: transactions.insertId.toString(),
+        },
+        notification: {
+          clickAction: ".MainActivity",
+          title: `You've been transfered Rp ${total}`,
+          body: note,
+        },
       });
 
       return resSuccess(res, OK, "Success Transfer", {

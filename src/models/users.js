@@ -32,9 +32,13 @@ class UserModel {
 
   getUserById(id) {
     return query(
-      "SELECT id, name, email, role, password, phone, photo, pin, balance FROM users WHERE id = ?",
+      "SELECT id, name, email, role, password, phone, photo, pin, balance, device FROM users WHERE id = ?",
       [id]
     );
+  }
+
+  getUserByDevice(device) {
+    return query("SELECT id FROM users WHERE device = ?", [device]);
   }
 
   deleteUser(id) {
@@ -48,6 +52,14 @@ class UserModel {
   updateUserBalance(data) {
     const { balance, id } = data;
     return query("UPDATE users SET balance = ? WHERE id = ?", [balance, id]);
+  }
+
+  updateUserDevice(data) {
+    const { device, email } = data;
+    return query("UPDATE users SET device = ? WHERE email = ?", [
+      device,
+      email,
+    ]);
   }
 
   updateUser(data, id) {

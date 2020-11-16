@@ -1,7 +1,13 @@
 const { compareSync, genSaltSync, hashSync } = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const { sign } = require("jsonwebtoken");
-const { insertUser, getUserByEmail } = require("../models/users");
+const {
+  insertUser,
+  getUserByEmail,
+  getUserByDevice,
+  updateUser,
+  updateUserDevice,
+} = require("../models/users");
 const {
   resSuccess,
   resFailure,
@@ -13,7 +19,7 @@ const {
 
 class Auth {
   async loginUser(req, res) {
-    const { email, password: passwordBody } = req.body
+    const { email, password: passwordBody, device } = req.body;
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty())
@@ -21,12 +27,28 @@ class Auth {
 
       const checkEmail = await getUserByEmail(email);
       if (!checkEmail.length)
-        return resFailure(res, UNAUTHORIZED, "Email and Password incorrect", {});
+        return resFailure(
+          res,
+          UNAUTHORIZED,
+          "Email and Password incorrect",
+          {}
+        );
 
       const { password, role, id } = checkEmail[0];
       const compare = compareSync(passwordBody, password);
       if (!compare)
-        return resFailure(res, UNAUTHORIZED, "Email and Password incorrect", {});
+        return resFailure(
+          res,
+          UNAUTHORIZED,
+          "Email and Password incorrect",
+          {}
+        );
+
+      if (device) {
+        const checkDevice = getUserByDevice(device);
+        if (checkDevice.length) updateUser({ device: "" }, checkDevice[0].id);
+        updateUserDevice({ device, email });
+      }
 
       const data = { role, token: sign({ id, role }, process.env.SECRET) };
       return resSuccess(res, CREATED, "Login succesfully", data);
@@ -36,7 +58,7 @@ class Auth {
   }
 
   async registerUser(req, res) {
-    const { name, email, password } = req.body
+    const { name, email, password } = req.body;
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty())
@@ -54,7 +76,10 @@ class Auth {
 
       const data = {
         role: "user",
-        token: sign({ id: register.insertId, role: "user" }, process.env.SECRET)
+        token: sign(
+          { id: register.insertId, role: "user" },
+          process.env.SECRET
+        ),
       };
       return resSuccess(res, CREATED, "Register succesfully", data);
     } catch (e) {

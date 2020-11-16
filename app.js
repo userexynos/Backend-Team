@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
+require("./src/configs/firebase");
 require("dotenv").config();
 require("./src/configs/database").connect((err) =>
   console.log(err ? err : "Database working")
@@ -33,7 +34,7 @@ app.use(`${prefix}/`, indexRouter);
 app.use(`${prefix}/auth`, authRouter);
 app.use(`${prefix}/users`, verify, usersRouter);
 app.use(`${prefix}/admin`, verifyAdmin, adminRouter);
-app.post(`${prefix}/midtrans/payment-process`, midtransPaymentProcess)
+app.post(`${prefix}/midtrans/payment-process`, midtransPaymentProcess);
 
 // app.use(`${prefix}/topup`, verifyAdmin, topupRouter)
 // app.use(`${prefix}/transfer`, transferRouter)
