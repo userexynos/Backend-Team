@@ -1,7 +1,7 @@
 const { getUserById } = require("../models/users");
 
 module.exports = (io) => {
-  io.connection("connection", (socket) => {
+  io.on("connection", (socket) => {
     const userId = socket.handshake.query.userId;
     socket.join(userId);
     socket.on("balance", () => {
