@@ -4,6 +4,7 @@ module.exports = (io) => {
   io.on("connection", (socket) => {
     socket.on("client", (userId) => {
       socket.join(userId);
+      console.log(socket.clients());
     });
 
     socket.on("balance", () => {
