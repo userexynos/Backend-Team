@@ -4,19 +4,20 @@ module.exports = (io) => {
   io.on("connection", (socket) => {
     const userId = socket.handshake.query.userId;
     socket.join(userId);
+    console.log(io.sockets.clients());
     socket.on("balance", () => {
-      console.log(userId);
+      // console.log(userId);
       if (userId)
         getUserById(userId).then((user) => {
-          console.log(user);
+          // console.log(user);
           socket.to(userId).emit("balance", user[0].balance);
         });
     });
     socket.on("transfer", (id) => {
-      console.log(id);
-      getUserById(id).then((user) =>
-        socket.to(id).emit("balance", user[0].balance)
-      );
+      getUserById(id).then((user) => {
+        console.log(user);
+        socket.to(id).emit("balance", user[0].balance);
+      });
     });
   });
 };
