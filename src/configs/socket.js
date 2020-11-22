@@ -5,12 +5,12 @@ module.exports = (io) => {
     const userId = socket.handshake.query.userId;
     socket.join(userId);
     socket.on("balance", () => {
-      getUserById(userId).then(() =>
-        socket.to(userid).emit("balance", user[0].balance)
+      getUserById(userId).then((user) =>
+        socket.to(userId).emit("balance", user[0].balance)
       );
     });
     socket.on("transfer", (id) => {
-      getUserById(id).then(() =>
+      getUserById(id).then((user) =>
         socket.to(id).emit("balance", user[0].balance)
       );
     });
