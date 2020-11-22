@@ -13,7 +13,7 @@ const {
   findUsers,
 } = require("../models/users");
 const {
-  getAllTransactions
+  getAllTransactions,
   // getAllTransactionsByUserid,
 } = require("../models/transactions");
 const upload = require("../helpers/multer");
@@ -68,10 +68,7 @@ class Admin {
 
   async insertUser(req, res) {
     if (
-
-      req.body.name &&
-      req.body.email &&
-      req.body.password ||
+      (req.body.name && req.body.email && req.body.password) ||
       req.body.pin ||
       req.body.phone ||
       req.body.verified
@@ -233,7 +230,6 @@ class Admin {
 
       return resSuccess(res, OK, "Success get Transactions History", history);
     } catch (error) {
-      console.log(error)
       return resFailure(res, INTERNALSERVERERROR, "Internal Server Error", {});
     }
   }

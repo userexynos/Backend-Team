@@ -18,8 +18,6 @@ const authRouter = require("./src/routes/auth");
 const usersRouter = require("./src/routes/users");
 const adminRouter = require("./src/routes/admin");
 const { midtransPaymentProcess } = require("./src/controllers/users");
-// const topupRouter = require('./src/routes/topup')
-// const transferRouter = require('./src/routes/transfer')
 
 const app = express();
 const prefix = process.env.PREFIX_URL || "/api/v1";
@@ -36,10 +34,6 @@ app.use(`${prefix}/users`, verify, usersRouter);
 app.use(`${prefix}/admin`, verifyAdmin, adminRouter);
 app.post(`${prefix}/midtrans/payment-process`, midtransPaymentProcess);
 
-// app.use(`${prefix}/topup`, verifyAdmin, topupRouter)
-// app.use(`${prefix}/transfer`, transferRouter)
-
-// Handle Error Notfound
 app.use(statusNotFound);
 
 module.exports = app;
