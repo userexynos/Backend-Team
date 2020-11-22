@@ -45,7 +45,7 @@ class Auth {
         );
 
       if (device) {
-        const checkDevice = getUserByDevice(device);
+        const checkDevice = await getUserByDevice(device);
         if (checkDevice.length) updateUser({ device: "" }, checkDevice[0].id);
         updateUserDevice({ device, email });
       }
