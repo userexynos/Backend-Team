@@ -4,7 +4,7 @@ module.exports = (io) => {
   io.on("connection", (socket) => {
     const userId = socket.handshake.query.userId;
     socket.join(userId);
-    // console.log(socket.sockets());
+    console.log(socket.rooms);
     socket.on("balance", () => {
       // console.log(userId);
       if (userId)
