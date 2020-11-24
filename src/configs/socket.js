@@ -1,26 +1,30 @@
 const { getUserById } = require("../models/users");
 
+const user = [];
+
 module.exports = (io) => {
   io.on("connection", (socket) => {
-    socket.on("client", (userId) => {
-      socket.join(userId);
-      console.log(socket.clients());
+    socket.on("userConnect", (id) => {
+      socket.join("balance-room");
+
+      const checkUser = user.filter((item) => item.id === id);
+      if (!checkUser.length) {
+        user.push({ id, socketId: socket.id });
+      } else {
+        const findUserIndex = user.findIndex((item) => item.id === id);
+        user[findUserIndex] = { id, socketId: socket.id };
+      }
+      console.log("Total Connect User: ", user);
     });
 
-    socket.on("balance", () => {
-      // console.log(userId);
-      if (userId)
-        getUserById(userId).then((user) => {
-          // console.log(user);
-          socket.to(userId).emit("balance", user[0].balance);
+    socket.on("userBalance", (id) => {
+      const checkUser = user.filter((item) => item.id === id);
+      if (checkUser.length) {
+        return getUserById(id).then((data) => {
+          socket.to(checkUser[0].socketId).emit("getBalance", data[0].balance);
         });
-    });
-
-    socket.on("transfer", (id) => {
-      getUserById(id).then((user) => {
-        console.log(user);
-        socket.to(id).emit("balance", user[0].balance);
-      });
+      }
+      console.log("user not connected");
     });
   });
 };
