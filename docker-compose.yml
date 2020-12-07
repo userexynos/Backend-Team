@@ -1,0 +1,10 @@
+version: "3.3"
+
+services:
+  zwallet:
+    container_name: zwallet
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3001:3000
