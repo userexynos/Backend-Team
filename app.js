@@ -4,9 +4,6 @@ const cors = require("cors");
 
 require("./src/configs/firebase");
 require("dotenv").config();
-require("./src/configs/database").connect((err) =>
-  console.log(err ? err : "Database working")
-);
 
 // Middlewares
 const { statusNotFound } = require("./src/middlewares/serverHandler");
