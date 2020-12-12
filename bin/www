@@ -6,9 +6,7 @@
 
 const app = require("../app");
 require("dotenv").config();
-require("../src/configs/database").connect((err) =>
-  console.log(err ? err : "Database working")
-);
+
 const debug = require("debug")("zwallet-api:server");
 const http = require("http");
 const io = require("socket.io");
