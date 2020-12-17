@@ -20,6 +20,7 @@ const {
 class Auth {
   async loginUser(req, res) {
     const { email, password: passwordBody, device } = req.body;
+    console.log(device);
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty())
