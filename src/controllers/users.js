@@ -249,16 +249,18 @@ class Users {
         type: "transfer",
       });
 
-      admin.messaging().sendToDevice(checkTo[0].device, {
-        data: {
-          id: transactions.insertId.toString(),
-        },
-        notification: {
-          clickAction: ".MainActivity",
-          title: `You've been transfered Rp ${total}`,
-          body: note,
-        },
-      });
+      if (checkTo[0].device) {
+        admin.messaging().sendToDevice(checkTo[0].device, {
+          data: {
+            id: transactions.insertId.toString(),
+          },
+          notification: {
+            clickAction: ".MainActivity",
+            title: `You've been transfered Rp ${total}`,
+            body: note,
+          },
+        });
+      }
 
       return resSuccess(res, OK, "Success Transfer", {
         id: transactions.insertId,
